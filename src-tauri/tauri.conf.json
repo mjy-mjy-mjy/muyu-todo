@@ -1,0 +1,51 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "木鱼清单",
+  "mainBinaryName": "MuyuTodo",
+  "version": "1.0.0",
+  "identifier": "com.mujianyuan.muyutodo",
+  "build": {
+    "frontendDist": "../src"
+  },
+  "app": {
+    "withGlobalTauri": true,
+    "windows": [
+      {
+        "label": "main",
+        "title": "木鱼清单",
+        "width": 430,
+        "height": 700,
+        "minWidth": 340,
+        "minHeight": 520,
+        "maxWidth": 620,
+        "maxHeight": 900,
+        "resizable": true,
+        "decorations": false,
+        "transparent": true,
+        "shadow": false,
+        "skipTaskbar": true,
+        "center": true,
+        "visible": true
+      }
+    ],
+    "security": {
+      "csp": "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'"
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": ["nsis", "msi"],
+    "icon": ["icons/32x32.png", "icons/128x128.png", "icons/128x128@2x.png", "icons/icon.ico"],
+    "shortDescription": "半透明 Windows 桌面待办清单",
+    "longDescription": "支持分类、重复任务、提醒、搜索、历史记录以及三种窗口模式的本地桌面待办应用。",
+    "windows": {
+      "webviewInstallMode": { "type": "downloadBootstrapper", "silent": true },
+      "nsis": {
+        "installMode": "currentUser",
+        "installerIcon": "icons/icon.ico",
+        "displayLanguageSelector": false
+      }
+    }
+  }
+}
+

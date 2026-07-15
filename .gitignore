@@ -1,0 +1,8 @@
+node_modules/
+src-tauri/target/
+dist/
+artifacts/
+node-compile-cache/
+playwright-artifacts-*\u002f
+*.log
+.DS_Store

@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light dark" />
+    <title>木鱼清单</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app-shell" id="appShell">
+      <header class="titlebar" data-tauri-drag-region>
+        <div class="brand" data-tauri-drag-region>
+          <span class="brand-mark" aria-hidden="true">✓</span>
+          <div data-tauri-drag-region>
+            <strong data-tauri-drag-region>木鱼清单</strong>
+            <span id="todayLabel" data-tauri-drag-region></span>
+          </div>
+        </div>
+        <div class="window-actions">
+          <button class="icon-button mode-button" id="modeCycleButton" title="切换窗口模式" aria-label="切换窗口模式">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v12H4zM8 21h8M12 17v4"/></svg>
+          </button>
+          <button class="icon-button" id="minimizeButton" title="最小化" aria-label="最小化">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"/></svg>
+          </button>
+          <button class="icon-button close-button" id="closeButton" title="隐藏到托盘" aria-label="关闭">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg>
+          </button>
+        </div>
+      </header>
+
+      <main class="main-content">
+        <section class="view active" id="tasksView" data-view="tasks">
+          <div class="overview">
+            <div>
+              <p class="eyebrow">今日节奏</p>
+              <h1><span id="remainingCount">0</span> 件待完成</h1>
+            </div>
+            <div class="progress-ring" id="progressRing" aria-label="今日完成进度">
+              <span id="progressValue">0%</span>
+            </div>
+          </div>
+
+          <div class="quick-add">
+            <span class="quick-plus" aria-hidden="true">＋</span>
+            <input id="quickInput" maxlength="120" autocomplete="off" placeholder="添加一件要做的事…" aria-label="快速添加任务" />
+            <button id="quickDetailButton" class="text-button" title="填写详细信息">详情</button>
+          </div>
+
+          <div class="toolbar">
+            <label class="search-box">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
+              <input id="searchInput" type="search" placeholder="搜索任务" aria-label="搜索任务" />
+            </label>
+            <button class="filter-toggle" id="filterToggle" aria-expanded="false">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M7 12h10M10 18h4"/></svg>
+              筛选
+            </button>
+          </div>
+
+          <div class="filter-panel" id="filterPanel" hidden>
+            <div class="segmented" id="statusFilters" role="group" aria-label="任务状态">
+              <button class="active" data-filter="open">进行中</button>
+              <button data-filter="today">今天</button>
+              <button data-filter="upcoming">以后</button>
+              <button data-filter="completed">已完成</button>
+              <button data-filter="all">全部</button>
+            </div>
+            <div class="select-row">
+              <select id="categoryFilter" aria-label="按分类筛选"><option value="">全部分类</option></select>
+              <select id="priorityFilter" aria-label="按优先级筛选">
+                <option value="">全部优先级</option>
+                <option value="high">高优先级</option>
+                <option value="medium">中优先级</option>
+                <option value="low">低优先级</option>
+                <option value="none">无优先级</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="category-strip" id="categoryStrip" aria-label="分类快捷筛选"></div>
+
+          <div class="task-list" id="taskList" aria-live="polite"></div>
+          <div class="empty-state" id="emptyState" hidden>
+            <div class="empty-illustration">✓</div>
+            <strong>清单很安静</strong>
+            <p>添加一件小事，让今天向前一点。</p>
+          </div>
+        </section>
+
+        <section class="view" id="historyView" data-view="history">
+          <div class="section-heading">
+            <div><p class="eyebrow">足迹</p><h1>完成历史</h1></div>
+            <button class="text-button danger-text" id="clearHistoryButton">清空</button>
+          </div>
+          <div class="history-summary" id="historySummary"></div>
+          <div class="history-list" id="historyList"></div>
+          <div class="empty-state" id="historyEmpty" hidden>
+            <div class="empty-illustration muted">↻</div>
+            <strong>还没有历史记录</strong>
+            <p>完成或删除的任务会出现在这里。</p>
+          </div>
+        </section>
+
+        <section class="view" id="settingsView" data-view="settings">
+          <div class="section-heading"><div><p class="eyebrow">偏好</p><h1>设置</h1></div></div>
+
+          <div class="settings-group">
+            <h2>窗口</h2>
+            <div class="mode-grid" id="modeGrid">
+              <button data-mode="desktop"><span>▱</span><strong>桌面层</strong><small>位于普通窗口下方</small></button>
+              <button data-mode="normal"><span>□</span><strong>普通窗口</strong><small>像常规应用一样使用</small></button>
+              <button data-mode="pinned"><span>⌃</span><strong>始终置顶</strong><small>保持在其他窗口上方</small></button>
+            </div>
+            <label class="range-setting">
+              <span><strong>面板透明度</strong><output id="opacityOutput">82%</output></span>
+              <input id="opacityRange" type="range" min="35" max="100" step="1" value="82" />
+            </label>
+          </div>
+
+          <div class="settings-group">
+            <h2>常规</h2>
+            <label class="switch-row">
+              <span><strong>开机自动启动</strong><small>启动后安静地显示桌面组件</small></span>
+              <input type="checkbox" id="autostartToggle" /><i></i>
+            </label>
+            <label class="switch-row">
+              <span><strong>关闭时隐藏到托盘</strong><small>保证到期提醒继续工作</small></span>
+              <input type="checkbox" id="closeToTrayToggle" checked /><i></i>
+            </label>
+          </div>
+
+          <div class="settings-group">
+            <div class="group-heading"><h2>分类</h2><button class="text-button" id="addCategoryButton">＋ 新建</button></div>
+            <div class="category-manager" id="categoryManager"></div>
+          </div>
+
+          <div class="settings-group">
+            <h2>数据</h2>
+            <div class="data-actions">
+              <button id="exportButton">导出备份</button>
+              <button id="importButton">导入备份</button>
+              <input id="importInput" type="file" accept="application/json,.json" hidden />
+            </div>
+            <p class="setting-note">任务只保存在这台电脑。建议偶尔导出一份备份。</p>
+          </div>
+
+          <p class="version-label">木鱼清单 1.0.0 · 保持专注，也留一点呼吸</p>
+        </section>
+      </main>
+
+      <nav class="bottom-nav" aria-label="主导航">
+        <button class="active" data-nav="tasks"><span>☑</span>清单</button>
+        <button data-nav="history"><span>◷</span>历史</button>
+        <button class="new-task-button" id="newTaskButton" aria-label="新建任务">＋</button>
+        <button data-nav="settings"><span>⚙</span>设置</button>
+        <button id="focusButton"><span>◉</span>今日</button>
+      </nav>
+    </div>
+
+    <dialog id="taskDialog" class="modal">
+      <form method="dialog" id="taskForm">
+        <div class="modal-header">
+          <div><p class="eyebrow">任务</p><h2 id="taskDialogTitle">新建任务</h2></div>
+          <button class="icon-button" value="cancel" aria-label="关闭"><svg viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></svg></button>
+        </div>
+        <input type="hidden" id="taskId" />
+        <label class="field"><span>任务名称</span><input id="taskTitle" maxlength="120" required autocomplete="off" placeholder="准备做什么？" /></label>
+        <label class="field"><span>备注</span><textarea id="taskNotes" maxlength="1000" rows="3" placeholder="补充一些细节（可选）"></textarea></label>
+        <div class="field-grid">
+          <label class="field"><span>分类</span><select id="taskCategory"></select></label>
+          <label class="field"><span>优先级</span><select id="taskPriority"><option value="none">无</option><option value="low">低</option><option value="medium">中</option><option value="high">高</option></select></label>
+        </div>
+        <div class="field-grid">
+          <label class="field"><span>截止时间</span><input id="taskDue" type="datetime-local" /></label>
+          <label class="field"><span>提醒时间</span><input id="taskReminder" type="datetime-local" /></label>
+        </div>
+        <div class="field-grid repeat-grid">
+          <label class="field"><span>重复</span><select id="taskRepeat"><option value="none">不重复</option><option value="daily">每天</option><option value="weekdays">工作日</option><option value="weekly">每周</option><option value="monthly">每月</option></select></label>
+          <label class="field" id="repeatIntervalField"><span>间隔</span><div class="number-suffix"><input id="taskRepeatInterval" type="number" min="1" max="99" value="1" /><em id="repeatUnit">天</em></div></label>
+        </div>
+        <div class="modal-actions">
+          <button class="danger-button" type="button" id="deleteTaskButton" hidden>删除</button>
+          <span></span>
+          <button value="cancel" class="secondary-button">取消</button>
+          <button type="submit" class="primary-button">保存任务</button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog id="categoryDialog" class="modal small-modal">
+      <form method="dialog" id="categoryForm">
+        <div class="modal-header"><div><p class="eyebrow">分类</p><h2>新建分类</h2></div><button class="icon-button" value="cancel" aria-label="关闭">×</button></div>
+        <label class="field"><span>名称</span><input id="categoryName" maxlength="20" required placeholder="例如：法语学习" /></label>
+        <fieldset class="color-picker" id="categoryColors"><legend>颜色</legend></fieldset>
+        <div class="modal-actions"><span></span><button value="cancel" class="secondary-button">取消</button><button type="submit" class="primary-button">创建</button></div>
+      </form>
+    </dialog>
+
+    <div class="toast-region" id="toastRegion" aria-live="polite"></div>
+    <script src="logic.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
