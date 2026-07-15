@@ -1,6 +1,6 @@
 [package]
 name = "muyu-todo"
-version = "1.0.0"
+version = "1.0.1"
 description = "A calm, translucent Windows desktop todo widget"
 authors = ["Muyu Todo"]
 edition = "2021"
@@ -24,4 +24,3 @@ tauri-plugin-autostart = "2"
 tauri-plugin-notification = "2"
 tauri-plugin-single-instance = "2"
 tauri-plugin-store = "2"
-
