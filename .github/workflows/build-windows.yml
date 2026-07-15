@@ -3,6 +3,8 @@ name: Build Windows app
 on:
   workflow_dispatch:
   push:
+    branches:
+      - main
     tags:
       - "v*"
 
@@ -35,4 +37,3 @@ jobs:
           name: MuyuTodo-Windows
           path: artifacts/*
           if-no-files-found: error
-
