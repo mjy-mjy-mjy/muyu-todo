@@ -34,7 +34,7 @@
   },
   "bundle": {
     "active": true,
-    "targets": ["nsis", "msi"],
+    "targets": ["nsis"],
     "icon": ["icons/32x32.png", "icons/128x128.png", "icons/128x128@2x.png", "icons/icon.ico"],
     "shortDescription": "半透明 Windows 桌面待办清单",
     "longDescription": "支持分类、重复任务、提醒、搜索、历史记录以及三种窗口模式的本地桌面待办应用。",
@@ -48,4 +48,3 @@
     }
   }
 }
-
