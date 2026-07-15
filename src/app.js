@@ -15,7 +15,7 @@
     tasks: [],
     categories: DEFAULT_CATEGORIES,
     history: [],
-    settings: { opacity: 82, windowMode: 'desktop', autostart: false, closeToTray: true }
+    settings: { opacity: 82, windowMode: 'normal', autostart: false, closeToTray: true }
   };
   const ui = { view: 'tasks', filter: 'open', category: '', priority: '', query: '' };
   let state = structuredClone(DEFAULT_STATE);
