@@ -32,5 +32,4 @@ npm test
 npm run tauri build
 ```
 
-也可以手动运行仓库中的 `Build Windows app` 工作流。构建产物包含便携版、NSIS 安装程序和 MSI 安装程序。
-
+也可以手动运行仓库中的 `Build Windows app` 工作流。构建产物包含 64 位便携版和 NSIS 安装程序。
