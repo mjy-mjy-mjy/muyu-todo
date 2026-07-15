@@ -15,18 +15,21 @@ fn show_main(app: &AppHandle) {
     }
 }
 
+fn exit_app(app: &AppHandle) {
+    if let Some(window) = app.get_webview_window("main") {
+        let _ = desktop::detach(&window);
+        let _ = window.set_always_on_top(false);
+        let _ = window.set_skip_taskbar(false);
+    }
+    app.exit(0);
+}
+
 #[tauri::command]
 fn set_window_mode(window: WebviewWindow, mode: String) -> Result<(), String> {
     match mode.as_str() {
         "desktop" => {
-            let _ = desktop::detach(&window);
-            window.set_always_on_top(false).map_err(|error| error.to_string())?;
-            window.set_skip_taskbar(true).map_err(|error| error.to_string())?;
-            if let Err(error) = desktop::attach(&window) {
-                // The WorkerW layer can be briefly unavailable while Explorer
-                // restarts. Always-on-bottom is a safe visual fallback.
-                window.set_always_on_bottom(true).map_err(|fallback| format!("{error}; fallback failed: {fallback}"))?;
-            }
+            desktop::detach(&window)?;
+            desktop::attach(&window)?;
         }
         "normal" => {
             desktop::detach(&window)?;
@@ -48,7 +51,7 @@ fn set_window_mode(window: WebviewWindow, mode: String) -> Result<(), String> {
 
 #[tauri::command]
 fn quit_app(app: AppHandle) {
-    app.exit(0);
+    exit_app(&app);
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
@@ -69,7 +72,7 @@ pub fn run() {
                 .show_menu_on_left_click(false)
                 .on_menu_event(|app, event| match event.id.as_ref() {
                     "show" => show_main(app),
-                    "quit" => app.exit(0),
+                    "quit" => exit_app(app),
                     _ => {}
                 })
                 .on_tray_icon_event(|tray, event| {
@@ -92,4 +95,3 @@ pub fn run() {
         .run(tauri::generate_context!())
         .expect("error while running Muyu Todo");
 }
-
